@@ -1,0 +1,147 @@
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NT&NM - Evénements</title>
+  
+</head>
+<body>
+
+  <header>
+    <h1>Nos Terres et Nos Mains - 60120</h1>
+    <link rel="stylesheet" href="test6.css">
+
+  </header>
+
+<nav>
+    <a href="PageAccueil.html">Carte</a>
+    <a href="PageEvt.html" class="active">événements</a>
+    <a href="#annuaire">annuaire</a>
+    <a href="#patrimoine">Patrimoine</a>
+    <a href="#le projet">le projet</a>
+  </nav>
+
+  <main>
+    <section id="événements">
+      <h2>Événements</h2>
+          <p> Foire à tout,  </p>
+
+
+
+
+        <button id="filtrer" class="button">Evénements à venir</button>
+        <button id="prochains30" class="button">Les 30 prochains jours</button>
+        <button id="reset" class="button">Tout afficher</button>
+
+        <div id="evenements"></div>
+
+        <script src="evenements.js"></script>
+        <script>
+          const container = document.getElementById('evenements');
+
+          function afficherEvenements(liste) {
+            container.innerHTML = ''; // Nettoyer
+            if (liste.length === 0) {
+              container.innerHTML = '<p>Aucun événement à afficher.</p>';
+              return;
+            }
+            liste.forEach(event => {
+              const card = document.createElement('div');
+              card.innerHTML = `
+                <h2>${event.titre}</h2>
+                <p><strong>Date :</strong> ${event.date}</p>
+                <p><strong>Lieu :</strong> ${event.lieu}</p>
+                <p>${event.description}</p>
+                <hr>
+              `;
+              container.appendChild(card);
+            });
+          }
+
+          // Comparaison de date (ISO format : AAAA-MM-JJ)
+          function estAPartirDAujourdhui(dateStr) {
+            const aujourdHui = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+            return dateStr >= aujourdHui;
+          }
+          function estDansLes30ProchainsJours(dateStr) {
+            const aujourdHui = new Date();
+            const dateEvenement = new Date(dateStr);
+            const dans30Jours = new Date();
+            dans30Jours.setDate(aujourdHui.getDate() + 30);
+            return dateEvenement >= aujourdHui && dateEvenement <= dans30Jours;
+          }
+
+          // Initialisation
+          evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
+          afficherEvenements(evenements);
+
+          // Filtres
+          document.getElementById('filtrer').addEventListener('click', () => {
+            const filtres = evenements.filter(ev => estAPartirDAujourdhui(ev.date));
+            evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
+            afficherEvenements(filtres);
+          });
+          document.getElementById('prochains30').addEventListener('click', () => {
+            const filtres = evenements.filter(ev => estDansLes30ProchainsJours(ev.date));
+            filtres.sort((a, b) => new Date(a.date) - new Date(b.date));
+            afficherEvenements(filtres);
+          });
+
+          document.getElementById('reset').addEventListener('click', () => {
+            evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
+            afficherEvenements(evenements);
+          });
+        </script>
+
+      <p>Le canton de Breteuil est riche en histoire, remontant à l'époque médiévale...</p>
+      <a href="#contacts" class="button">En savoir plus</a>
+    </section>
+
+    <section id="annuaire">
+      <h2>Annuaire</h2>
+      <p>Situé dans l'Oise, le canton 60120 offre des paysages variés entre bocages et forêts...</p>
+    </section>
+
+    <section id="population">
+      <h2>Population</h2>
+      <p>Le canton de Breteuil compte environ XX habitants, répartis sur plusieurs communes...</p>
+    </section>
+
+    <section id="patrimoine">
+      <h2>Patrimoine</h2>
+      <p>De nombreux monuments historiques sont présents, comme l'église Saint-Pierre de Breteuil...</p>
+    </section>
+
+    <section id="le projet">
+      <h2>Le Projet</h2>
+      <p>Pour plus d'informations, contactez la mairie de Breteuil...</p>
+      <a href="mailto:mairie@breteuil.fr" class="button">Contacter</a>
+    </section>
+  </main>
+
+<footer>
+  <section id="contacts">
+    <h2>Contacts</h2>
+    <p>Pour plus d'informations, contactez la mairie de Breteuil...</p>
+    <a href="mailto:mairie@o.fr" class="button">Contacter</a>
+  </section>
+</footer>
+
+<script>
+  window.addEventListener("scroll", function () {
+    const header = document.querySelector("header");
+    const nav = document.querySelector("nav");
+    if (window.scrollY > 50) {
+      header.classList.add("shrink");
+      nav.classList.add("shrink");
+    } else {
+      header.classList.remove("shrink");
+      nav.classList.remove("shrink");
+    }
+  });
+</script>
+
+
+</body>
+</html>

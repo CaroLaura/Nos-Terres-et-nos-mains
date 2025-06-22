@@ -1,0 +1,130 @@
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Canton 60120 - Breteuil</title>
+  
+</head>
+<body>
+
+  <header>
+    <h1>Nos Terres et Nos Mains - 60120</h1>
+    <link rel="stylesheet" href="style/test6.css">
+
+  </header>
+
+  <nav>
+    <a href="#carte" class="active">Carte</a>
+    <a href="#événements">événements</a>
+    <a href="#annuaire">annuaire</a>
+    <a href="#patrimoine">Patrimoine</a>
+    <a href="#le projet">le projet</a>
+  </nav>
+
+  <main>
+	<section id="carte">
+	<!-- Insertion de la carte interractive -->
+  	<h2>Les communes du 60120</h2>
+		<p>Cliquez sur un village pour découvrir son histoire et ses monuments.</p>
+		<object data="Communes_60120.svg" type="image/svg+xml" width="100%" height="500px"></object>
+		 <p>Les 30 communes du 60120 sont : Ausauvillers, Bacouël, Beauvoir, Blancfossé, Bonneuil-les-eaux, Bonvillers, Breteuil, Broyes, Chepoix, Cormeilles, Croissy sur Celle, Esquennoy, Fléchy, Gannes, Gouy les Groseillers, Hardivillers, La Hérelle, Le Crocq, Le Mesnil Saint-Firmin, Mory-Montcrux, Paillart, Plainville, Rocquencoury, Rouvroy-les-Merles, Sérévillers, Tartigny, Troussencourt, Vendeuil-Caply, Villers-Vicomte.</p>
+	</section>
+
+  <section id="Oise">
+      <h2>Histoire de l'Oise</h2>
+      <p>Le département de l’Oise tire son nom du fleuve qui le traverse du sud au nord, mais dans le canton du 60120, ce sont la Noye et le Gué du Nil qui façonnent le paysage.La Noye prend sa source à Vendeuil-Caply, au sud du 60120, avant de poursuivre son cours vers le nord-ouest jusqu’à Boves, dans le département voisin de la Somme (80). </p>
+      <p>L’Oise, dans l’Antiquité, était occupée par le peuple gaulois des Bellovaques. Beauvais conserve dans son nom la trace de ce peuple fondateur. De cette époque gallo-romaine subsistent de nombreux vestiges archéologiques, notamment dans la commune de Vendeuil-Caply, où se trouve le musée archéologique de l'Oise. Celui-ci conserve et expose les traces de la vie quotidienne, de l’artisanat et de l’architecture antique, témoignant de la richesse culturelle du territoire à travers les siècles.
+     </p> 
+  </section>
+
+    <section id="événements">
+      <h2>Événements</h2>
+      <p>Spectacles, foires, concerts, marchés, rencontres, festivals, ... Venez découvrir les événements de la région ! </p>
+      <div id="4-evenements" class="grille-evenements"></div>
+
+      <script src="evenements.js"></script>
+      <script>
+        const conteneur = document.getElementById('4-evenements');
+  
+        // Convertir la date en objet Date pour comparaison
+        const ajd = new Date();
+
+        const futurs = evenements
+          .map(e => ({ ...e, dateObj: new Date(e.date) }))
+          .filter(e => e.dateObj >= ajd)
+          .sort((a, b) => a.dateObj - b.dateObj)
+          .slice(0, 4); // Ne garder que les 4 premiers
+
+        function formaterDate(frDate) {
+          // On crée un objet Date à partir de la chaîne
+          const dateObj = new Date(frDate);
+
+          // Options de format pour obtenir "mardi 25 juin"
+          const options = {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long'
+          };
+           return dateObj.toLocaleDateString('fr-FR', options);
+          }
+
+        futurs.forEach(e => {
+          const div = document.createElement('div');
+          div.className = "evenement";
+          div.innerHTML = `
+            <h3>${e.titre}</h3>
+            <p><strong>Date :</strong> ${formaterDate(e.date)}</p>
+            <p><strong>Lieu :</strong> ${e.lieu}</p>
+            <p><strong>Horaires :</strong> ${e.horaire}</p>
+            <p>${e.description}</p>
+          `;
+          conteneur.appendChild(div);
+        });
+      </script>
+
+      <a href="#contacts" class="button">Voir plus</a>
+    </section>
+
+    <section id="annuaire">
+      <h2>Annuaire</h2>
+      <p>Situé dans l'Oise, le canton 60120 offre des paysages variés entre bocages et forêts...</p>
+    </section>
+
+
+    <section id="patrimoine">
+      <h2>Patrimoine</h2>
+      <p>De nombreux monuments historiques sont présents, comme l'église Saint-Pierre de Breteuil...</p>
+    </section>
+
+    <section id="le projet">
+      <h2>Le Projet</h2>
+      <p>Pour plus d'informations, contactez la mairie de Breteuil...</p>
+      <a href="mailto:mairie@breteuil.fr" class="button">Contacter</a>
+    </section>
+  </main>
+
+<footer>
+  <section id="contacts">
+    <h2>Contacts</h2>
+    <p>Pour toute demande contactez XXX</p>
+    <a href="mailto:caroline.buquet@eivp-paris.fr" class="button">Contacter</a>
+  </section>
+</footer>
+
+<script>
+  window.addEventListener("scroll", function () {
+    const header = document.querySelector("header");
+    const nav = document.querySelector("nav");
+    if (window.scrollY > 50) {
+      header.classList.add("shrink");
+      nav.classList.add("shrink");
+    } else {
+      header.classList.remove("shrink");
+      nav.classList.remove("shrink");
+    }
+  });
+</script>
+
+</body>
+</html>

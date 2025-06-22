@@ -1,0 +1,87 @@
+/* test 2 */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Open+Sans&display=swap');
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #FFF9E5; /* couleur du font principal */
+  color: #2D4739;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  font-family: 'Merriweather', serif;
+  color: #A4343A;
+}
+
+header {
+  background-color: #355E3B;
+  padding: 40px 0;
+  text-align: center;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+nav {
+  background-color: #A4343A;
+  display: flex;
+  justify-content: center;
+}
+
+nav a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover,
+nav .active {
+  background-color: #FFD447;
+  color: #2D4739;
+}
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+  background-color: #FFFFFF; /* couleur du centre au fond */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+a.button {
+  display: inline-block;
+  background-color: #FFD447;
+  color: #2D4739;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+a.button:hover {
+  background-color: #e6b800;
+  transform: scale(1.05);
+}
+
+footer {
+  background-color: #355E3B;
+  color: white;
+  padding: 30px 0;
+  text-align: center;
+}
+
+footer a.button {
+  background-color: #A4343A;
+  color: white;
+}
+
+footer a.button:hover {
+  background-color: #802c2f;
+}

@@ -1,0 +1,167 @@
+/* test6 */
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #E0DFC0; /* EDEBC7  new FFFEE4 */
+  color: #4E0110;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+	h1 {
+  font-family: 'Merriweather', serif;
+  color: #FFFFFF; 
+}
+
+	h2 {
+  font-family: 'Merriweather', serif;
+  color: #163E0F;
+}
+
+header {
+  background-color: #0A2904;
+  color: white;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  margin_bottom: 0;
+}
+
+header h1 {
+  font-size: 1.5rem; /* titre écrit petit */
+  margin: 0;
+  padding: 10px 0; /* Réduire la hauteur du titre */
+}
+
+nav {
+  background-color: #163E0F;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  top: 50px;
+  transition: all 0.3s ease;
+}
+
+header.shrink + nav {
+  top: 35px; /* Aligne la nav plus haut quand le header est réduit */
+}
+
+nav a {
+  color: white;
+  padding: 14px 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover,
+nav .active {
+  background-color: #0A2904;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  margin-top: 170px;
+  padding: 20px 20px 40px; /* Espace pour le header + nav : selon la hauteur du top*/
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05) /*Ombre douce */
+
+}
+
+.button {
+  background-color: #163E0F; /* new : 881600, old :  C16200 */
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #051E00;
+  transform: scale(1.05);
+}
+
+footer {
+  background-color: #0A2904;
+  color: white;
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+footer section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: left;
+}
+
+footer h2 {
+  margin-top: 0;
+  color: #FFFFFF ;
+}
+
+
+/* Effet de réduction du header ET de la nav */
+header {
+  transition: all 0.3s ease;
+}
+
+header.shrink h1 {
+  font-size: 1rem;
+  padding: 5px 0;
+  transition: all 0.3s ease;
+}
+
+nav {
+  padding: 14px 0;
+  transition: all 0.3s ease;
+}
+
+nav.shrink {
+  padding: 5px 0;
+}
+
+nav.shrink a {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.grille-evenements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.evenement {
+  color: #051E00; /* 4E0110 */
+  flex: 1 1 calc(25% - 20px); /* 4 par ligne avec marge */
+  background-color: #f9f9f9; /* f9f9f9 , 163E0F , 30402D , 6C9B64, AD785E, 6F1A07, 20320F */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  min-width: 200px;
+  max-width: 300px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+}
+
+.evenement:hover {
+  transform: translateY(-5px);
+}
