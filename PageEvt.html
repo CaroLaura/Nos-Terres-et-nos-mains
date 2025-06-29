@@ -10,7 +10,7 @@
 
   <header>
     <h1>Nos Terres et Nos Mains - 60120</h1>
-    <link rel="stylesheet" href="test6.css">
+    <link rel="stylesheet" href="style/main.css">
 
   </header>
 
@@ -25,7 +25,7 @@
   <main>
     <section id="événements">
       <h2>Événements</h2>
-          <p> Foire à tout,  </p>
+          <p> Foire à tout, animations, fêtes locales, ... </p>
 
 
 
@@ -36,23 +36,45 @@
 
         <div id="evenements"></div>
 
-        <script src="evenements.js"></script>
+        <script src="base_donnees/events.js"></script>
         <script>
           const container = document.getElementById('evenements');
 
+          function estValide(ev) {
+            const valeur = parseInt(ev.importance, 10);
+            return [0,1, 2, 3, 4, 5].includes(valeur);
+          }
+
           function afficherEvenements(liste) {
-            container.innerHTML = ''; // Nettoyer
+            container.innerHTML = '';
             if (liste.length === 0) {
               container.innerHTML = '<p>Aucun événement à afficher.</p>';
               return;
-            }
+          }
+
+            // Tri chronologique
+            liste.sort((a, b) => new Date(a.date) - new Date(b.date));
+
             liste.forEach(event => {
               const card = document.createElement('div');
+
+              let descriptionHTML = '';
+              if (event.description && event.description.toLowerCase() !== 'null') {
+                descriptionHTML = `<p>${event.description}</p>`;
+              }
+
+               // Lien : "Voir plus" si lien valide
+              let lienHTML = '';
+              if (event.lien && event.lien.toLowerCase() !== 'null') {
+                lienHTML = `<p><a href="${event.lien}" target="_blank" class="button">Voir plus</a></p>`;
+              }
+
               card.innerHTML = `
                 <h2>${event.titre}</h2>
-                <p><strong>Date :</strong> ${event.date}</p>
+                <p><strong>Date :</strong> ${event.date} ${event.dateFin ? ' - ' + event.dateFin : ''}</p>
                 <p><strong>Lieu :</strong> ${event.lieu}</p>
-                <p>${event.description}</p>
+                ${descriptionHTML}
+                ${lienHTML}
                 <hr>
               `;
               container.appendChild(card);
@@ -72,25 +94,23 @@
             return dateEvenement >= aujourdHui && dateEvenement <= dans30Jours;
           }
 
-          // Initialisation
-          evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
-          afficherEvenements(evenements);
+          // Initialisation - chargement initial
+          afficherEvenements(evenements.filter(estValide));
 
           // Filtres
           document.getElementById('filtrer').addEventListener('click', () => {
-            const filtres = evenements.filter(ev => estAPartirDAujourdhui(ev.date));
-            evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
+            const filtres = evenements.filter(ev => estAPartirDAujourdhui(ev.date) && estValide(ev));
             afficherEvenements(filtres);
           });
           document.getElementById('prochains30').addEventListener('click', () => {
-            const filtres = evenements.filter(ev => estDansLes30ProchainsJours(ev.date));
+            const filtres = evenements.filter(ev => estDansLes30ProchainsJours(ev.date)&& estValide(ev));
             filtres.sort((a, b) => new Date(a.date) - new Date(b.date));
             afficherEvenements(filtres);
           });
 
           document.getElementById('reset').addEventListener('click', () => {
-            evenements.sort((a, b) => new Date(b.date) - new Date(a.date))
-            afficherEvenements(evenements);
+            const filtres = evenements.filter(ev => estAPartirDAujourdhui(ev.date));
+            afficherEvenements(filtres);
           });
         </script>
 

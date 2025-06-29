@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NT&NM - Annuaire</title>
+
+	<!-- Leaflet CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+	<!-- Leaflet JS -->
+	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="style/annuaire.css">
   
 </head>
 <body>
 
   <header>
     <h1>Nos Terres et Nos Mains - 60120</h1>
-    <link rel="stylesheet" href="annuaire.css">
 
   </header>
 
@@ -25,7 +31,7 @@
   <main>
     <section id="annuaire">
       <h2>Annuaire</h2>
-        <p>Découvrez les points de ventes de vos producteurs locaux, le patrimoine bâtit de votre région et bien d'autre encore. Viandes, fromage, yaourt, miel, fruits et légumes n'attendent que vous !</p>
+        <p>Découvrez les points de ventes de vos producteurs locaux, le patrimoine bâtit de votre région et bien d'autres encore. Viandes, fromage, yaourt, miel, fruits et légumes n'attendent que vous !</p>
 
 	<div id="filtres">
   		<label for="filtre-commune">Commune :</label>
@@ -37,71 +43,163 @@
 	    <select id="filtre-type">
 	    <option value="">Tous</option>
 	  </select>
+
+	<button id="toggle-map" class="button">Afficher la carte</button>
+
 	</div>
 
+	<div id="map" style="height: 400px; margin-top: 20px; border-radius: 10px;"></div>
 
         <div id="liste-annuaire"></div>
 
-        <script src="lieux.js"></script>
+        <script src="base_donnees/lieux.js"></script>
 
-	<script>
-	  const conteneur = document.getElementById('liste-annuaire');
-	  const selectCommune = document.getElementById('filtre-commune');
-	  const selectType = document.getElementById('filtre-type');
+<script>
+  const conteneur = document.getElementById('liste-annuaire');
+  const selectCommune = document.getElementById('filtre-commune');
+  const selectType = document.getElementById('filtre-type');
 
-	  // Remplir les menus déroulants avec les communes et types uniques
-	  const communes = [...new Set(lieux.map(l => l.Commune).filter(Boolean))].sort();
-	  const types = [...new Set(lieux.map(l => l.Type).filter(Boolean))].sort();
+  // Initialisation de la carte Leaflet
+  const map = L.map('map').setView([49.65, 2.25], 11); // Centré approximativement sur 60120
 
-	  communes.forEach(commune => {
-	    const opt = document.createElement('option');
-	    opt.value = commune;
-	    opt.textContent = commune;
-	    selectCommune.appendChild(opt);
+  // Ajouter la couche de tuiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
+
+  // Stockage des marqueurs
+  let marqueurs = [];
+
+  // Remplir les menus déroulants avec les valeurs uniques
+  const communes = [...new Set(lieux.map(l => l.Commune).filter(Boolean))].sort();
+  const types = [...new Set(lieux.map(l => l.Type).filter(Boolean))].sort();
+
+  communes.forEach(commune => {
+    const opt = document.createElement('option');
+    opt.value = commune;
+    opt.textContent = commune;
+    selectCommune.appendChild(opt);
+  });
+
+  types.forEach(type => {
+    const opt = document.createElement('option');
+    opt.value = type;
+    opt.textContent = type;
+    selectType.appendChild(opt);
+  });
+
+  // Fonction principale d’affichage
+  function afficherLieux() {
+    conteneur.innerHTML = '';
+    marqueurs.forEach(m => map.removeLayer(m));
+    marqueurs = [];
+
+    const filtreC = selectCommune.value;
+    const filtreT = selectType.value;
+
+    const filtrés = lieux.filter(lieu =>
+      (!filtreC || lieu.Commune === filtreC) &&
+      (!filtreT || lieu.Type === filtreT)
+    );
+
+
+    // com pour ajouter de l'affichage : <p><strong>Commune :</strong> ${lieu.Commune} </p>
+
+    filtrés.forEach(lieu => {
+      const div = document.createElement('div');
+      div.className = 'lieu';
+       div.innerHTML = `
+	  <h2>${lieu.Nom}</h2>
+	  <p><strong>Catégorie :</strong> ${lieu.SousType || "non renseigné"}</p>
+	  <p><strong>Adresse :</strong> ${lieu.Adresse1 || ""}, ${lieu.CodePostal} ${lieu.Commune}</p>
+    ${lieu.Description ? `<p> ${lieu.Description}</p>` : ""}
+	  ${lieu.LienSite ? `<p><a href="${lieu.LienSite}" target="_blank">Lien vers le site</a></p>` : ""}
+	`;
+
+
+	const btn = div.querySelector('.voir-plus-btn');
+	if (btn) {
+	  btn.addEventListener('click', () => {
+	  div.classList.toggle('expanded');
+	  btn.textContent = div.classList.contains('expanded') ? 'Voir moins' : 'Voir plus';
 	  });
+	}
 
-	  types.forEach(type => {
- 	   const opt = document.createElement('option');
- 	   opt.value = type;
- 	   opt.textContent = type;
- 	   selectType.appendChild(opt);
- 	 });
+      conteneur.appendChild(div);
 
- 	 // Fonction d'affichage avec filtres appliqués
- 	 function afficherLieux() {
- 	   conteneur.innerHTML = ''; // Vider l'affichage
- 	   const filtreC = selectCommune.value;
- 	   const filtreT = selectType.value;
+      // Ajout du marqueur sur la carte
+      const type = lieu.Type || "default";
+      const icon = iconesParType[type] || iconesParType["default"];
+      const marker = L.marker([lieu.Latitude, lieu.Longitude], { icon: icon })
 
- 	   const filtresAppliqués = lieux.filter(lieu =>
-  	    (!filtreC || lieu.Commune === filtreC) &&
-  	    (!filtreT || lieu.Type === filtreT)
-  	  );
+        .addTo(map)
+        .bindPopup(`<strong>${lieu.Nom}</strong><br>${lieu.Commune}`);
+      marqueurs.push(marker);
+    });
 
- 	   filtresAppliqués.forEach(lieu => {
-  	    const div = document.createElement('div');
-  	    div.className = 'lieu';
-  	    div.innerHTML = `
-  	      <h2>${lieu.Nom}</h2>
-  	      <p><strong>Commune :</strong> ${lieu.Commune}</p>
-  	      <p><strong>Type :</strong> ${lieu.Type || "N/A"}</p>
-  	      <p><strong>Adresse :</strong> ${lieu.Adresse1 || ""}, ${lieu.CodePostal} ${lieu.Adresse3}</p>
-  	      ${lieu.Description ? `<p><strong>Description :</strong> ${lieu.Description}</p>` : ""}
-  	      ${lieu.LienPhoto ? `<p><a href="${lieu.LienPhoto}" target="_blank">Lien vers le site ou photo</a></p>` : ""}
-  	    `;
-  	    conteneur.appendChild(div);
- 	   });
- 	 }
+    // Si des lieux sont affichés, centrer la carte sur le premier
+    if (filtrés.length > 0) {
+      const lat = filtrés[0].Latitude;
+      const lng = filtrés[0].Longitude;
+      map.setView([lat, lng], 12);
+    }
+  }
 
- 	 // Réagir au changement des filtres
-  	selectCommune.addEventListener('change', afficherLieux);
-  	selectType.addEventListener('change', afficherLieux);
-
-  	// Affichage initial
-  	   afficherLieux();
-	</script>
+  // Écouteurs de filtres
+  selectCommune.addEventListener('change', afficherLieux);
+  selectType.addEventListener('change', afficherLieux);
 
 
+const iconesParType = {
+  "Patrimoine": L.icon({
+    iconUrl: 'img/marker-icon-violet.png',
+    shadowUrl: 'img/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  }),
+  "Boutique Terroir": L.icon({
+    iconUrl: 'img/marker-icon-green.png',
+    shadowUrl: 'img/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  }),
+  "default": L.icon({
+    iconUrl: 'img/marker-icon-red.png',
+    shadowUrl: 'img/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  })
+};
+
+
+  // Chargement initial
+  afficherLieux();
+
+const mapDiv = document.getElementById('map');
+const toggleMapBtn = document.getElementById('toggle-map');
+let mapVisible = false;
+
+toggleMapBtn.addEventListener('click', () => {
+  mapVisible = !mapVisible;
+  mapDiv.style.display = mapVisible ? 'block' : 'none';
+  toggleMapBtn.textContent = mapVisible ? 'Masquer la carte' : 'Afficher la carte';
+
+  if (mapVisible) {
+    setTimeout(() => {
+      map.invalidateSize(); // corrige le redimensionnement
+    }, 200);
+  }
+});
+
+
+</script>
 
 
     </section>
